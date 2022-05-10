@@ -298,6 +298,9 @@ treeplot.enrichResult <- function(x,
 ##' @param geneClusterPanel one of "heatMap"(default), "dotplot", "pie".
 ##' Will be removed in the next version.
 ##' @param pie Used only when geneClusterPanel = "pie", 
+##' @param size variable that used to scale the sizes of categories, used only
+##' when geneClusterPanel = "dotplot". One of "count", "geneRatio" or variables
+##' in enrichment result.
 ##' proportion of clusters in the pie chart, one of 'equal' (default) and 'Count'.
 ##' Will be removed in the next version.
 ##' @param clusterPanel.params list, the parameters to control the attributes of cluster panel.
@@ -315,6 +318,7 @@ treeplot.enrichResult <- function(x,
 treeplot.compareClusterResult <-  function(x, 
                                       showCategory = 5,
                                       color = "p.adjust",
+                                      size = "geneRatio",
                                       nWords = 4,                     # removed
                                       nCluster = 5,                   # removed
                                       cex_category = 1, 
@@ -482,7 +486,7 @@ treeplot.compareClusterResult <-  function(x,
     }
     # y <- get_selected_category(showCategory, x, split)  
     y <- fortify(x, showCategory = showCategory,
-             includeAll = TRUE, split = split)
+             includeAll = TRUE, split = split, by = size)
     y$Cluster <- sub("\n.*", "", y$Cluster)
     if ("core_enrichment" %in% colnames(y)) { ## for GSEA result
         y$geneID <- y$core_enrichment
@@ -553,7 +557,11 @@ treeplot.compareClusterResult <-  function(x,
     }
 
     if (geneClusterPanel == "dotplot") {
-        dotdata <- as.data.frame(x)
+        by <- switch(size, count         = "Count", 
+                           geneRatio     = "GeneRatio",
+                           size)  
+
+        dotdata <- y
         pData <- as.data.frame(p$data)
         paths <- pData$label[order(pData$y, decreasing = TRUE)] %>% .[!is.na(.)]
         dotdata <- dotdata[dotdata$Description %in% paths, ]
@@ -561,7 +569,7 @@ treeplot.compareClusterResult <-  function(x,
         p <- p + ggnewscale::new_scale_colour() + 
             ggtreeExtra::geom_fruit(data = dotdata, geom = geom_point,
                        mapping = aes_string(x = "Cluster", y = "Description", 
-                                     size = "Count", color = color),
+                                     size = by, color = color),
                        pwidth = 0.5, offset = -0.2,
                        axis.params = list(axis = "x", text.size = 3, line.alpha = 0)) +
             scale_colour_continuous(low="red", high="blue", 

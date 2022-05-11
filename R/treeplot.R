@@ -549,7 +549,8 @@ treeplot.compareClusterResult <-  function(x,
         
         p <- p + ggnewscale::new_scale_fill() # +
             # coord_equal(xlim = xlim)
-        p <- ggtree::gheatmap(p, ID_Cluster_mat) + 
+        p <- ggtree::gheatmap(p, ID_Cluster_mat, colnames_angle = 45,
+                        hjust = 1, legend_title = color) +
             scale_fill_continuous(low="red", high="blue", 
                                   guide = guide_colorbar(reverse=TRUE),
                                   trans = "log10",
@@ -571,7 +572,8 @@ treeplot.compareClusterResult <-  function(x,
                        mapping = aes_string(x = "Cluster", y = "Description", 
                                      size = by, color = color),
                        pwidth = 0.5, offset = -0.2,
-                       axis.params = list(axis = "x", text.size = 3, line.alpha = 0)) +
+                       axis.params = list(axis = "x", text.size = 3, line.alpha = 0,
+                                          text.angle = 45, hjust = 1)) +
             scale_colour_continuous(low="red", high="blue", 
                                   guide=guide_colorbar(reverse=TRUE),
                                   trans = "log10",

@@ -561,8 +561,9 @@ treeplot.compareClusterResult <-  function(x,
         by <- switch(size, count         = "Count", 
                            geneRatio     = "GeneRatio",
                            size)  
-
-        dotdata <- y
+        # Re-fortify to avoid losing factor "Cluster"
+        dotdata <- fortify(x, showCategory = showCategory,
+                    includeAll = TRUE, split = split, by = size)
         pData <- as.data.frame(p$data)
         paths <- pData$label[order(pData$y, decreasing = TRUE)] %>% .[!is.na(.)]
         dotdata <- dotdata[dotdata$Description %in% paths, ]

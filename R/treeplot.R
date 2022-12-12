@@ -572,7 +572,7 @@ treeplot.compareClusterResult <-  function(x,
             ggtreeExtra::geom_fruit(data = dotdata, geom = geom_point,
                        mapping = aes_string(x = "Cluster", y = "Description", 
                                      size = by, color = color),
-                       pwidth = 0.5, offset = -0.2,
+                       pwidth = 0.5,
                        axis.params = list(axis = "x", text.size = 3, line.alpha = 0,
                                           text.angle = 45, hjust = 1)) +
             scale_colour_continuous(low="red", high="blue", 

@@ -98,6 +98,7 @@ setMethod("treeplot", signature(x = "compareClusterResult"),
 ##'         \item \code{label_format} A numeric value sets wrap length, alternatively a
 ##'         custom function to format axis labels.
 ##'     }
+##' @param tiplab.geom.params additional parameters passed to geom used by \code{\link[ggtree]{geom_tiplab}}
 ##' @importFrom ggtree `%<+%`
 ##' @importFrom ggtree ggtree
 ##' @importFrom ggtree geom_tiplab
@@ -142,6 +143,7 @@ treeplot.enrichResult <- function(x,
                                       label_words_n = 4,
                                       label_format = 30
                                   ),
+                                  tiplab.geom.params = NULL,
                                   ...) {
 
 
@@ -278,7 +280,7 @@ treeplot.enrichResult <- function(x,
         label_format_tiplab = label_format_tiplab, offset = offset, 
         fontsize = fontsize, group_color = group_color, extend = extend, 
         hilight = hilight, cex_category = cex_category, align = align, align_tiplab = FALSE,
-        color = color)     
+        color = color, tiplab.geom.params = tiplab.geom.params)     
     # xlim <-  c(0, xlim * 3 * max(p$data$x))
     # p + coord_cartesian(xlim = xlim) +
     #   p + ggnewscale::new_scale_colour() +
@@ -359,7 +361,9 @@ treeplot.compareClusterResult <-  function(x,
                                           tiplab = rel(1),             
                                           extend = 0.3,                
                                           hexpand = .1                  
-                                      ),...) {
+                                      ),
+                                      tiplab.geom.params = NULL,
+                                      ...) {
 
     # change parameter name
     ##############################################################
@@ -509,7 +513,7 @@ treeplot.compareClusterResult <-  function(x,
         fontsize = fontsize, group_color = group_color, extend = extend, 
         hilight = hilight, cex_category = cex_category, ID_Cluster_mat = ID_Cluster_mat,
         geneClusterPanel = geneClusterPanel, align = align, add_tippoint = FALSE,
-        align_tiplab = TRUE, color = color)
+        align_tiplab = TRUE, color = color, tiplab.geom.params = tiplab.geom.params)
 
      
     p_data <- as.data.frame(p$data)
@@ -674,7 +678,8 @@ group_tree <- function(hc, clus, d, offset_tiplab, nWords,
                        offset, fontsize, group_color, 
                        extend, hilight, cex_category, 
                        ID_Cluster_mat = NULL, geneClusterPanel = NULL,
-                       align, add_tippoint = TRUE, align_tiplab = TRUE, color) {
+                       align, add_tippoint = TRUE, align_tiplab = TRUE, color,
+                       tiplab.geom.params = NULL) {
     group <- count <- NULL
     # cluster data
     dat <- data.frame(name = names(clus), cls=paste0("cluster_", as.numeric(clus)))
@@ -738,7 +743,10 @@ group_tree <- function(hc, clus, d, offset_tiplab, nWords,
                 guide = guide_colorbar(reverse = TRUE))
     }
     ## add tiplab 
-    p <- p + geom_tiplab(offset = offset_tiplab, hjust = 0,
-                show.legend = FALSE, align = align_tiplab, linesize = 0)     
+    p <- p + do.call(
+        what = geom_tiplab,
+        args = c(list(offset = offset_tiplab, hjust = 0,
+                        show.legend = FALSE, align = align_tiplab, linesize = 0),
+                tiplab.geom.params))
     return(p)
 }
